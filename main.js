@@ -1,9 +1,38 @@
 
 const __main__ = () => {
   console.log('---------------------------')
+  // isPalindrome(1234321)
   // reverseNum2(-2147483642) // 002
   // reverseNum(3840) // 002
   // elementForSum([1, 2,7,11,15], 9) // 001
+}
+
+
+/* 3. 题目：判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）
+            读都是一样的整数。你能不将整数转为字符串来解决这个问题吗？
+
+      示例：输入: 121
+            输出: true
+
+            输入: -121
+            输出: false
+            解释: 从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
+*/
+const isPalindrome = (num) => {
+  if (num < 0 || (num && !(num % 10))) { // 边界情况
+    console.log('reverseNum result: false for minu or x0')
+    return false
+  }
+  let next = 0
+  let tmp = Number.parseInt(num / 10) // 记录num去掉最小一位
+  // 反转到下一次反转不会出现num < next（也可以直接反转到第一次num<=next为止）
+  while (num > next && num !== next && tmp !== next) {
+    next = next * 10 + num % 10
+    num = tmp
+    tmp = Number.parseInt(num / 10)
+  }
+  console.log('reverseNum result: ', num === next || tmp === next)
+  return num === next || tmp === next
 }
 
 /* 2. 题目：给出一个32位的有符号整数，你需要将这个整数中每位上的数字进行反转。
