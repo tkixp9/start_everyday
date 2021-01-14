@@ -1,6 +1,7 @@
 
 const __main__ = () => {
-  console.log('---------------------------')
+  console.log('-------------divider--------------')
+  // longestCommonPrefix2(['flower', 'flow', 'flight'])
   // isPalindrome(1234321)
   // reverseNum2(-2147483642) // 002
   // reverseNum(3840) // 002
@@ -8,6 +9,101 @@ const __main__ = () => {
 }
 
 
+/* 4. 题目：编写一个函数来查找字符串数组中的最长公共前缀。
+            如果不存在公共前缀，返回空字符串 ""。
+
+      示例：输入: strs = ['flower', 'flow', 'flight']
+            输出: 'fl'
+*/
+const longestCommonPrefix = (strs) => {
+  console.log('longestCommonPrefix strs: ', strs)
+  if (strs.length === 0) { // 空数组，直接返回''
+   console.log('longestCommonPrefix result: for empty strs')
+    return ''
+  }
+  if (strs.length === 1) { // 单个元素，直接返回
+    console.log('longestCommonPrefix result: for single strs')
+    return strs[0]
+  }
+  let short = Number.MAX_SAFE_INTEGER 
+  for (const tmp of strs) {
+    const len = tmp.length
+    if (len < short) {
+      short = len // 计算最短的元素
+    }
+  }
+  if (short === 0) { // 有空元素，直接返回''
+   console.log('longestCommonPrefix result: for empty element')
+   return ''
+  }
+  const compareSingle = (pos) => { // 比较所有元素中的某个位置的值
+    const s = strs[0][pos]
+    for (let i = 1; i < strs.length; i++) {
+      if (s !== strs[i][pos]) {
+        return false // 有一个不同，直接返回false
+      }
+    }
+    return true
+  }
+  const compare = (start, end) => { // 返回最大共同前缀的最后下标 
+    if (start > end) {
+      return start - 1 // 如果开始下标大于结束下标，返回前一个下标 
+    }
+    const pos = start + Number.parseInt((end - start) / 2) // 中间下标
+    const posTmp = compareSingle(pos) // 比较最中间下标的值
+    if (start === end) { // 前后下标相同，根据结果返回值
+       return posTmp ? pos : pos - 1
+    }
+    const startResult = compare(start, pos - 1) // 比较中间下标左边的部分
+    if (!posTmp || startResult + 1 < pos) {
+      return startResult // 中间下标不同，或者左边不完全相同，直接返回左边的结果为 最后结果
+    }
+    return compare(pos + 1, end) // 中间下标和左边部分都相同，则计算右边部分，返回
+  }
+  const resultPos = compare(0, short - 1)
+  const result = resultPos > -1 ? strs[0].substring(0, resultPos + 1) : ''
+  console.log('longestCommonPrefix result: ', result)
+  return result
+}
+
+const longestCommonPrefix2 = (strs) => {
+  console.log('longestCommonPrefix strs: ', strs)
+  if (strs.length === 0) { // 空数组，直接返回''
+   console.log('longestCommonPrefix result: for empty strs')
+    return ''
+  }
+  const compareSingle = (datas, start, end) => { // 计算两个字符串的最长公共前缀
+    let i = 0
+    for (; i < datas[start].length; i++) { // 逐个比较，可以考虑采用二分法进行比较
+      if (datas[start][i] === undefined || datas[start][i] !== datas[end][i]) {
+        break
+      }
+    }
+    if (i) {
+      return datas[start].substring(0, i)
+    }
+    return ''
+  }
+  const longestCommonPrefixReal = (datas, start, end) => { // 分组计算最长公共前缀
+    if (end === start) { // 只有一个元素的情况
+      return datas[start]
+    }
+    if (end - start === 1) { // 两个元素的情况
+      return compareSingle(datas, start, end)
+    }
+    const pos = start + Number.parseInt((end - start) / 2) //中间位置
+    const leftStr = longestCommonPrefixReal(datas, start, pos)
+    if (leftStr) { // 左半部分的结果不为空，需要再和右半部分进行
+      const rightStr = longestCommonPrefixReal(datas, pos + 1, end)
+      return longestCommonPrefixReal([leftStr, rightStr], 0, 1)
+    } else { // 左半部分为空，直接返回''
+      return ''
+    }
+  }
+  const result = longestCommonPrefixReal(strs, 0, strs.length - 1)
+  console.log('longestCommonPrefix result: ', result)
+  return result
+}
 /* 3. 题目：判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）
             读都是一样的整数。你能不将整数转为字符串来解决这个问题吗？
 
@@ -19,6 +115,7 @@ const __main__ = () => {
             解释: 从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
 */
 const isPalindrome = (num) => {
+  console.log('reverseNum num: ', num)
   if (num < 0 || (num && !(num % 10))) { // 边界情况
     console.log('reverseNum result: false for minu or x0')
     return false
