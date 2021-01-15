@@ -1,6 +1,12 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
+  placeFlowers([1, 0, 0, 0, 0, 0, 1, 0, 0])
+  // canPlaceFlowers([0], 1)
+  // max2Profit([7, 1, 5, 3, 6, 4])
+  // maxProfit1([3, 2, 9, 1, 2, 8])
+  // mergeOrders([4,5,6,0,0,0], 3, [1,2,3],3)
+  // climbStairs1(6)
   // longestCommonPrefix2(['flower', 'flow', 'flight'])
   // isPalindrome(1234321)
   // reverseNum2(-2147483642) // 002
@@ -8,6 +14,275 @@ const __main__ = () => {
   // elementForSum([1, 2,7,11,15], 9) // 001
 }
 
+
+/* 9. 题目：（LeetCode 122）种花问题：假设有一个很长的花坛，一部分地块种植了花，
+             另一部分却没有。可是，花不能种植在相邻的地块上，它们会争夺水源，两者都会死去。
+             给你一个整数数组  flowerbed 表示花坛，由若干 0 和 1 组成，其中 0 表示没种植花，
+             1 表示种植了花。另有一个数 n ，能否在不打破种植规则的情况下种入 n 朵花？能则
+             返回 true ，不能则返回 false。
+
+            输入：flowerbed = [1,0,0,0,1], n = 1
+            输出：true
+*/
+const canPlaceFlowers = (flowerbed, n) => {
+  console.log('canPlaceFlowers datas: ', flowerbed, n)
+  if (n < 1) {
+    console.log('canPlaceFlowers result: true')
+    return true
+  }
+  const len = flowerbed.length
+  const findBlock = (nums, pos) => { // 从pos位置开始，找到第一块空地
+    let start = -1
+    let end = -1
+    let i = pos
+    while (i < len && (start === -1 || flowerbed[i] === 0)) {
+      const item = flowerbed[i]
+      if (item === 0) {
+        if (start === -1) {
+          start = i // 记录空地开始位置 
+        }
+        end = i // 更新空地结束位置
+      }
+      i++
+    }
+    return { start, end, len: end - start + 1 }
+  }
+  let i = 0
+  let nowN = 0
+  while (i < len) {
+    const result = findBlock(flowerbed, i) // 寻找空地 
+    let tmp = result.len
+    if (result.start === 0) {
+      tmp++
+    }
+    if (result.end === len - 1) {
+      tmp++
+    }
+    nowN += Number.parseInt(tmp / 2 - .5) // 计算找到的空地可以中几盆花
+    if (nowN >= n) { // 已经种够了
+      console.log('canPlaceFlowers result: true')
+      return true
+    }
+    if (result.end === -1) { // 找不到空地了
+      break
+    }
+    i = result.end + 2 // 下一块空地开始的位置
+  }
+  console.log('canPlaceFlowers result: false')
+  return false
+}
+
+const placeFlowers = (flowerbed) => {
+  console.log('placeFlowers flowerbed: ', flowerbed)
+  const len = flowerbed.length
+  const findBlock = (nums, pos) => {
+    let start = -1
+    let end = -1
+    let i = pos
+    while (i < len && (start === -1 || flowerbed[i] === 0)) {
+      const item = flowerbed[i]
+      if (item === 0) {
+        if (start === -1) {
+          start = i
+        }
+        end = i
+      }
+      i++
+    }
+    return { start, end, len: end - start + 1 }
+  }
+  let i = 0
+  let nowN = 0
+  while (i < len) {
+    const result = findBlock(flowerbed, i)
+    let tmp = result.len
+    if (result.start === 0) {
+      tmp++
+    }
+    if (result.end === len - 1) {
+      tmp++
+    }
+    nowN += Number.parseInt(tmp / 2 - .5)
+    if (result.end === -1) {
+      break
+    }
+    i = result.end + 2
+  }
+  console.log('placeFlowers result: ', nowN)
+  return nowN
+}
+/* 8. 题目：（LeetCode 122）给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+             设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。
+             注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+
+            输入: [7,1,5,3,6,4]
+            输出: 7
+            解释: 在第 2 天（股票价格 = 1）的时候买入，
+                  在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+                  随后，在第 4 天（股票价格 = 3）的时候买入，
+                  在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
+*/
+const max2Profit = (prices) => {
+  console.log('max2Profit prices: ', prices)
+  if (prices.length < 2) {
+    return 0
+  }
+  let buy = prices[0] // 记录新的买点
+  let sell = -1 // 可能的卖点
+  let result = 0 // 记录最大利润
+  let i = 1
+  const len = prices.length
+  while (i <= len) {
+    const tmp = prices[i]
+    if (tmp < buy || tmp < sell) { // 发现更低点，更新买点
+      const newResule = sell - buy
+      if (newResule > 0) { // 存在利润，完成一次买卖
+        result += newResule
+      }
+      buy = tmp
+      sell = -1
+    } else if (tmp > sell) { // 发现高点，更新卖点
+      sell = tmp
+    }
+    i++
+  }
+  const newResule = sell - buy
+  if (newResule > 0) { // 完成最后一次买卖
+    result += newResule
+  }
+  console.log('max2Profit result: ', result)
+  return result
+}
+
+/* 7. 题目：（LeetCode 121）给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+            如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。
+
+            注意：你不能在买入股票前卖出股票。
+            示例：输入: [7,1,5,3,6,4]
+                  输出: 5
+                  解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+*/
+const maxProfit = (prices) => {
+  console.log('maxProfit prices: ', prices)
+  // buy和sell的0位置记录前一个低点买入获取最大利润的位置
+  // buy和sell的1位置记录下一个更低点的位置
+  const buy = [Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]
+  const sell = [-1, -2]
+  let i = 0
+  const len = prices.length
+  while (i <= len) {
+    const tmp = prices[i]
+    if (tmp < buy[1]) { // 寻找到一个更低点
+      if (sell[1] - buy[1] > sell[0] - buy[0]) { // 判断是否更新上一个最大利润的位置
+        sell[0] = sell[1]
+        buy[0] = buy[1]
+      }
+      buy[1] = tmp // 记录新的最低点
+      sell[1] = -2
+    } else if (tmp > sell[1]) { // 更新高点
+      sell[1] = tmp
+    }
+    i++
+  }
+  const result = Math.max(sell[0] - buy[0], sell[1] - buy[1], 0)
+  console.log('maxProfit result: ', result)
+  return result
+}
+
+const maxProfit1 = (prices) => {
+  console.log('maxProfit prices: ', prices)
+  if (prices.length < 2) {
+    return 0
+  }
+  let buy = prices[0] // 记录新的买点
+  let sell = prices[1] // 记录新的卖点
+  let result = 0 // 记录最大利润
+  let i = 1
+  const len = prices.length
+  while (i <= len) {
+    const tmp = prices[i]
+    if (tmp < buy) { // 更新买点
+      const newResule = sell - buy
+      if (newResule > result) { // 判断是否更新新低点钱的最大利润
+        result = newResule
+      }
+      buy = tmp
+      sell = -1
+    } else if (tmp > sell) { // 更新卖点
+      sell = tmp
+    }
+    i++
+  }
+  result = Math.max(sell - buy, result, 0) // 最后一次更新利润
+  console.log('maxProfit result: ', result)
+  return result
+}
+
+/* 6. 题目：（LeetCode 88）给你两个有序整数数组 nums1 和 nums2，
+             请你将 nums2 合并到 nums1 中，使 nums1 成为一个有序数组。
+             初始化 nums1 和 nums2 的元素数量分别为 m 和 n 。你可以假
+             设 nums1 有足够的空间（空间大小等于 m + n）来保存 nums2 中的元素。
+
+              示例：输入：nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3
+                    输出：[1,2,2,3,5,6]
+*/
+const mergeOrders = (num1, m, num2, n) => {
+  console.log('mergeOrders data: ', num1, m, num2, n)
+  let i = m - 1
+  let j = n - 1
+  let k = m + n - 1
+  while (j >= 0) {
+    if (i < 0) {
+      num1[k--] = num2[j--]
+      continue
+    }
+    if (num2[j] > num1[i]) {
+      num1[k--] = num2[j--]
+    } else {
+      num1[k--] = num1[i--]
+    }
+  }
+  console.log('mergeOrders result: ', num1)
+  return num1
+}
+
+/* 5. 题目：（LeetCode 70）假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+            每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+
+            注意：给定 n 是一个正整数。
+*/
+const climbStairs = (num) => { // climbStairs(n) = climbStairs(n - 1) + climbStairs(n - 2)
+  console.log('climbStairs num: ', num)
+  if (num === 1) {
+    return 1
+  }
+  if (num === 2) {
+    return 2
+  }
+  const result = climbStairs(num - 1) + climbStairs(num - 2)
+  console.log('climbStairs result: ', result)
+  return result
+}
+
+const climbStairs1 = (num) => { // climbStairs(n) = climbStairs(n - 1) + climbStairs(n - 2)
+  console.log('climbStairs num: ', num)
+  if (num === 1) {
+    return 1
+  }
+  if (num === 2) {
+    return 2
+  }
+  let last = 1 // n - 2
+  let result = 2 // n - 1
+  let tmp = 0
+  for (let i = 3; i <= num; i++) {
+    tmp = result
+    result += last
+    last = tmp
+  }
+  console.log('climbStairs result: ', result)
+  return result
+}
 
 /* 4. 题目：编写一个函数来查找字符串数组中的最长公共前缀。
             如果不存在公共前缀，返回空字符串 ""。
