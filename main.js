@@ -1,7 +1,9 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
-  placeFlowers([1, 0, 0, 0, 0, 0, 1, 0, 0])
+  distributeCandies([1, 1, 5, 1, 3, 6])
+  canPlaceFlowers2([1,0,0,0,0,1], 2)
+  // placeFlowers([1, 0, 0, 0, 0, 0, 1, 0, 0])
   // canPlaceFlowers([0], 1)
   // max2Profit([7, 1, 5, 3, 6, 4])
   // maxProfit1([3, 2, 9, 1, 2, 8])
@@ -14,8 +16,35 @@ const __main__ = () => {
   // elementForSum([1, 2,7,11,15], 9) // 001
 }
 
+/* 10. 题目：（LeetCode 575）分糖果: 给定一个偶数长度的数组，其中不同的数字代表着不同种类的糖果，
+              每一个数字代表一个糖果。你需要把这些糖果平均分给一个弟弟和一个妹妹。
+              返回妹妹可以获得的最大糖果的种类数。
+              示例 :
+              输入: candies = [1,1,2,2,3,3]
+              输出: 3
+              解析: 一共有三种种类的糖果，每一种都有两个。
+                   最优分配方案：妹妹获得[1,2,3],弟弟也获得[1,2,3]。这样使妹妹获得糖果的种类数最多。
+*/
+const distributeCandies = (nums) => {
+  console.log('distributeCandies nums: ', nums)
+  const max = nums.length / 2
+  const set = new Set()
+  let count =  0
+  for (const item of nums) {
+    if (!set.has(item)) {
+      if (++count === max) {
+        console.log('distributeCandies result: ', count)
+        return count
+      }
+      set.add(item)
+    }
+    
+  }
+  console.log('distributeCandies result: ', count)
+  return count
+}
 
-/* 9. 题目：（LeetCode 122）种花问题：假设有一个很长的花坛，一部分地块种植了花，
+/* 9. 题目：（LeetCode 605）种花问题：假设有一个很长的花坛，一部分地块种植了花，
              另一部分却没有。可是，花不能种植在相邻的地块上，它们会争夺水源，两者都会死去。
              给你一个整数数组  flowerbed 表示花坛，由若干 0 和 1 组成，其中 0 表示没种植花，
              1 表示种植了花。另有一个数 n ，能否在不打破种植规则的情况下种入 n 朵花？能则
@@ -24,6 +53,37 @@ const __main__ = () => {
             输入：flowerbed = [1,0,0,0,1], n = 1
             输出：true
 */
+const canPlaceFlowers2 = (flowerbed, n) => {
+  console.log('canPlaceFlowers2 datas: ', flowerbed, n)
+  if (n < 1) {
+    console.log('canPlaceFlowers2 result: true')
+    return true
+  }
+  const len = flowerbed.length
+  let count = 0
+  let prev = 0
+  let next = flowerbed[0]
+  let i = 0
+  while (count < n && i < len) {
+    const current = next
+    next = flowerbed[i + 1]
+    if (prev === 0 && current === 0 && next !== 1) { // 可以种花的条件
+      if (++count >= n) {
+        console.log('canPlaceFlowers result: true')
+        return true
+      }
+      i += 2 // 比较位置整体向后移动两位
+      prev = next
+      next = flowerbed[i]
+    } else {
+      i++ // 比较位置整体向后移动一位
+      prev = current
+    }
+  }
+  console.log('canPlaceFlowers result: false')
+  return false
+}
+
 const canPlaceFlowers = (flowerbed, n) => {
   console.log('canPlaceFlowers datas: ', flowerbed, n)
   if (n < 1) {
@@ -52,10 +112,10 @@ const canPlaceFlowers = (flowerbed, n) => {
   while (i < len) {
     const result = findBlock(flowerbed, i) // 寻找空地 
     let tmp = result.len
-    if (result.start === 0) {
+    if (result.start === 0) { // 开始边界情况
       tmp++
     }
-    if (result.end === len - 1) {
+    if (result.end === len - 1) { // 结尾边界情况
       tmp++
     }
     nowN += Number.parseInt(tmp / 2 - .5) // 计算找到的空地可以中几盆花
