@@ -1,8 +1,9 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
-  distributeCandies([1, 1, 5, 1, 3, 6])
-  canPlaceFlowers2([1,0,0,0,0,1], 2)
+  lengthOfLongestSubstring2('cdd')
+  // distributeCandies([1, 1, 5, 1, 3, 6])
+  // canPlaceFlowers2([1,0,0,0,0,1], 2)
   // placeFlowers([1, 0, 0, 0, 0, 0, 1, 0, 0])
   // canPlaceFlowers([0], 1)
   // max2Profit([7, 1, 5, 3, 6, 4])
@@ -14,6 +15,85 @@ const __main__ = () => {
   // reverseNum2(-2147483642) // 002
   // reverseNum(3840) // 002
   // elementForSum([1, 2,7,11,15], 9) // 001
+}
+
+
+
+
+/* 11. 题目：（LeetCode 3）无重复字符的最长子串: 给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
+              示例 :
+                    输入: s = "abcabcbb"
+                    输出: 3 
+              解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+*/
+const lengthOfLongestSubstring2 = (str) => {
+  console.log('lengthOfLongestSubstring str: ', str)
+  const splitAll = (indexes, org, lastMax) => { // 一次寻找重复字符，分割子串
+     // start:开始位置，end：结束位置，current：当前寻找重复字符的位置
+    const { start, end, current } = indexes[0]
+    if (current >= end || lastMax > end - start + 1) { // 整个子串寻找结束：寻找完成或者子串太短
+      indexes.shift()
+      return end - start + 1 // 当前子串没有重复字符，可以是最后结果 
+    }
+    const flag = org[current] // 判断的重复字符
+    let pos = current
+    let last = start - 1
+    while (true) {
+      const tmp = pos
+      pos = org.indexOf(flag, pos + 1) // 寻找下一个重复字符
+      if (pos !== -1 && pos <= end) { // 找到一个重复字符
+        if (lastMax < pos - last - 1) { // 足够长的重复字符分割的子串放入待判断子串数组中
+          indexes.push({ start: last + 1, end: pos - 1, current: last + 1 })
+        }
+        indexes[0].drop = true
+        last = tmp
+      } else {
+        break
+      }
+    }
+    if (indexes[0].drop) {
+      // 最后一个重复字符到end的子串放入待判断子串数组中
+      lastMax < end - last && indexes.push({ start: last + 1, end, current: last + 1 })
+      indexes.shift() // 当前子串中已经判断有重复字符，删除
+    } else {
+      indexes[0].current++ // 还未找到重复字符，继续判断下一个位置
+      return current - start + 1
+    }
+    console.log('lengthOfLongestSubstring abcabcbbab indexes: ', JSON.stringify(indexes))
+  } 
+  const indexes = [{ start: 0, end: str.length - 1, current: 0 }] //初始位置子串
+  let result = 0
+  while (indexes.length) {
+    result = Math.max(splitAll(indexes, str, result) || 0, result)
+  }
+  console.log('lengthOfLongestSubstring result: ', result)
+  return result
+}
+
+const lengthOfLongestSubstring = (str) => {
+  console.log('lengthOfLongestSubstring str: ', str)
+  const len = str.length
+  if (!len) {
+    return 0
+  }
+  let count = 0 // 最后的结果
+  let start = 0 // 当前不重复字符串的开始位置
+  let last = {} // 用来存储当前的不重复字符
+  last[str[0]] = 0
+  let end = 1 // 当前的位置
+  while (end < len) {
+    const item = str[end]
+    const index = last[item]
+    if (index >= start) { // 发现重复字符
+      count = Math.max(count, end - start) // 记录已经得到的最大长度
+      start = index + 1 // 下一次开始的位置
+    }
+    last[item] = end // 记录新字符
+    end++ // 继续遍历
+  }
+  count = Math.max(count, end - start)
+  console.log('lengthOfLongestSubstring result: ', count)
+  return count
 }
 
 /* 10. 题目：（LeetCode 575）分糖果: 给定一个偶数长度的数组，其中不同的数字代表着不同种类的糖果，
@@ -28,20 +108,25 @@ const __main__ = () => {
 const distributeCandies = (nums) => {
   console.log('distributeCandies nums: ', nums)
   const max = nums.length / 2
-  const set = new Set()
-  let count =  0
+  const set = new Set() // 存放妹妹的糖果
+  let count =  0 // 也可以直接使用set.size
   for (const item of nums) {
-    if (!set.has(item)) {
-      if (++count === max) {
+    if (!set.has(item)) { // 只分给妹妹没有的糖果
+      if (++count === max) { // 妹妹是否分完糖果
         console.log('distributeCandies result: ', count)
         return count
       }
-      set.add(item)
+      set.add(item) // 分给妹妹
     }
-    
   }
   console.log('distributeCandies result: ', count)
   return count
+}
+const distributeCandies1 = (nums) => {
+  console.log('distributeCandies nums: ', nums)
+  const result = Math.min(nums.length / 2, new Set(nums).size)
+  console.log('distributeCandies result: ', result)
+  return result
 }
 
 /* 9. 题目：（LeetCode 605）种花问题：假设有一个很长的花坛，一部分地块种植了花，
