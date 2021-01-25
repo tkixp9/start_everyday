@@ -1,7 +1,9 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
-  lengthOfLongestSubstring2('cdd')
+  maxArea2([1, 8, 6, 2, 5, 4, 8, 3, 7])
+  // threeSum2([1,-1,-1,0])
+  // lengthOfLongestSubstring2('cdd')
   // distributeCandies([1, 1, 5, 1, 3, 6])
   // canPlaceFlowers2([1,0,0,0,0,1], 2)
   // placeFlowers([1, 0, 0, 0, 0, 0, 1, 0, 0])
@@ -19,6 +21,152 @@ const __main__ = () => {
 
 
 
+/* 13. 题目：（LeetCode 11）盛最多水的容器： 给你 n 个非负整数 a1，a2，...，an，
+              每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直
+              线 i 的两个端点分别为 (i, ai) 和 (i, 0) 。找出其中的两条线，使得
+              它们与 x 轴共同构成的容器可以容纳最多的水。
+
+              说明：你不能倾斜容器。
+              示例：
+                    输入：[1,8,6,2,5,4,8,3,7]
+                    输出：49 
+              解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。
+              在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+
+*/
+const maxArea = (nums) => {
+  console.log('maxArea nums: ', nums)
+  const len = nums.length
+  let max = 0
+  for (let i = 0; i < len; i++) {
+    const current = nums[i]
+    let left = 0
+    let right = len - 1
+    let tmp = -1
+    while (!(right === i && left === i)) { // 寻找tmp
+      const lenLeft = i - left
+      const lenRight = right - i
+      if (lenLeft >= lenRight) {
+        if (current <= nums[left]) {
+          max = Math.max(max, current * (i - left))
+          break
+        }
+        left++
+      } else {
+        if (current <= nums[right]) {
+          max = Math.max(max, current * (right - i))
+          break
+        }
+        right--
+      }
+    }
+  }
+  console.log('maxArea result: ', max)
+  return max
+}
+
+const maxArea2 = (nums) => {
+  console.log('maxArea nums: ', nums)
+  const len = nums.length
+  let left = 0
+  let right = len - 1
+  let max = 0
+  while (left < right) {
+    const flag = nums[left] < nums[right]
+    const tmp = (right - left) * (flag ? nums[left] : nums[right])
+    tmp > max && (max = tmp)
+    flag ? left++ : right-- 
+  }
+  console.log('maxArea result: ', max)
+  return max
+}
+/* 12. 题目：（LeetCode 15）三数之和： 给你一个包含 n 个整数的数组 nums，
+              判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？
+              请你找出所有和为 0 且不重复的三元组。
+
+              注意：答案中不可以包含重复的三元组。
+
+              示例 :
+                    输入：nums = [-1,0,1,2,-1,-4]
+                    输出：[[-1,-1,2],[-1,0,1]]
+*/
+const threeSum = (nums) => {
+  console.log('threeSum nums: ', nums)
+  let len = nums.length
+  if (len < 3) { // 边界情况
+    console.log('threeSum result: ', [])
+    return []
+  }
+  nums.sort((a, b) => a - b) // 排序
+  const findRest = (result, flag, start, end) => { // 根据flag寻找另外两个
+    let left = start
+    let right = end
+    while (left < right) {
+      const tmp = { left: nums[left], right: nums[right] }
+      if (tmp.right < 0) {
+        break
+      }
+      const sum = tmp.left + tmp.right + flag // 计算三个位置的值
+      if (sum === 0) {
+        result.push([flag, tmp.left, tmp.right])
+        while (left < right && tmp.left === nums[++left]) {} // 避免重复
+        while (left < right && tmp.right === nums[--right]) {} // 避免重复
+      } else if (sum > 0) {
+        while (left < right && tmp.right === nums[--right]) {} // 避免重复
+      } else {
+        while (left < right && tmp.left === nums[++left]) {} // 避免重复
+      }
+    }
+  }
+  const result = []
+  let i = 0
+  while (i < len - 2 && nums[i] <= 0) {
+    const first = nums[i]
+    if (first !== nums[i - 1]) { // 避免 重复
+      findRest(result, first, i + 1, len - 1) // 确定i为第一个
+    }
+    i++
+  }
+  console.log('threeSum result: ', result)
+  return result
+}
+
+const threeSum2 = (nums) => {
+  console.log('threeSum nums: ', nums)
+  let len = nums.length
+  if (len < 3) { // 边界情况
+    console.log('threeSum result: ', [])
+    return []
+  }
+  nums.sort((a, b) => a - b) // 排序
+  const result = []
+  let first, second, third
+  for (let i = 0; i < len - 2; i++) {
+    second = third = null
+    if (first === nums[i]) { // 避免重复
+      continue
+    }
+    first = nums[i]
+    for (let j = i + 1; j < len - 1; j++) {
+      third = null
+      if (second === nums[j]) {
+        continue
+      }
+      second = nums[j]
+      for (let k = j + 1; k < len; k++) {
+        if (third === nums[k]) {
+          continue
+        }
+        third = nums[k]
+        if (first + second + third === 0) {
+          result.push([first, second, third])
+        }
+      }
+    }
+  }
+  console.log('threeSum result: ', result)
+  return result
+}
 
 /* 11. 题目：（LeetCode 3）无重复字符的最长子串: 给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
               示例 :
