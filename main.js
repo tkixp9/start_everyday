@@ -1,7 +1,8 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
-  maxArea2([1, 8, 6, 2, 5, 4, 8, 3, 7])
+  divide(2147483647, 1)
+  // maxArea2([1, 8, 6, 2, 5, 4, 8, 3, 7])
   // threeSum2([1,-1,-1,0])
   // lengthOfLongestSubstring2('cdd')
   // distributeCandies([1, 1, 5, 1, 3, 6])
@@ -20,6 +21,160 @@ const __main__ = () => {
 }
 
 
+
+/* 14. 题目：（LeetCode 29）两数相除：给定两个整数，被除数 dividend 和除数 divisor。
+              将两数相除，要求不使用乘法、除法和 mod 运算符。返回被除数
+               dividend 除以除数 divisor 得到的商。整数除法的结果应当截去
+              （truncate）其小数部分，例如：truncate(8.345) = 8 以及 
+              truncate(-2.7335) = -2
+
+              示例:
+                  输入: dividend = 10, divisor = 3
+                  输出: 3
+              解释: 10/3 = truncate(3.33333..) = truncate(3) = 3
+
+              提示：
+                  被除数和除数均为 32 位有符号整数。
+                  除数不为 0。
+                  假设我们的环境只能存储 32 位有符号整数，
+                  其数值范围是 [−231,  231 − 1]。本题中，如果除法
+                  结果溢出，则返回 231 − 1。
+
+*/
+const divide = (dividend, divisor) => {
+  console.log('divide nums: ', dividend, divisor)
+  if (!divisor) { // 除数为0
+    return NaN
+  }
+  const minus = dividend > 0 ^ divisor > 0 // 结果为负数
+  // 被除数和除数转为负数,使用负数，避免溢出
+  divisor = divisor < 0 ? divisor : -divisor
+  dividend = dividend < 0 ? dividend : -dividend
+  if (dividend === divisor) { // 相等返回
+    return minus ? -1 : 1
+  }
+  const min = -1 << 31 // 最小数
+  if (dividend === min && divisor === -1 && !minus) {
+    return -(min + 1) // 溢出的返回结果
+  }
+  if (dividend > divisor) {
+    return 0
+  }
+  if (divisor === -1) {
+    return -dividend * (minus ? -1 : 1)
+  }
+  const singleDivide = (first, second) => { // 一次算术式除法
+    first = Number.parseInt(first)
+    second = Number.parseInt(second)
+    let result = 0
+    while (first >= second) {
+      first -= second
+      result++
+    }
+    return { quotient: result, remainder: String(first) }
+  }
+  const result = []
+  let org = String(dividend)
+  org = org.substring(1, org.length)
+  const maxLen = org.length
+  let second = String(divisor)
+  second = second.substring(1, second.length)
+  let i = second.length
+  let first = org.substring(0, i) // 转换为字符串进行截取操作
+  while (true) {
+    const tmp = singleDivide(first, second)
+    result.push(tmp.quotient) // 一次试商
+    i++ // 右边加一位
+    if (i > maxLen) {
+      break
+    }
+    first = tmp.remainder + org[i - 1] // 一次余数加上下一位
+  }
+  console.log('divide result: ', Number.parseInt(result.join('')) * (minus ? -1 : 1))
+  return Number.parseInt(result.join('')) * (minus ? -1 : 1)
+}
+
+const divide2 = (dividend, divisor) => {
+  console.log('divide nums: ', dividend, divisor)
+  if (!divisor) {
+    return NaN
+  }
+  const minus = dividend > 0 ^ divisor > 0
+  divisor = divisor < 0 ? divisor : -divisor
+  dividend = dividend < 0 ? dividend : -dividend
+  if (dividend === divisor) {
+    return minus ? -1 : 1
+  }
+  const min = -1 << 31
+  if (dividend === min && divisor === -1 && !minus) {
+    return -(min + 1)
+  }
+  if (dividend > divisor) {
+    return 0
+  }
+  if (divisor === -1) {
+    return -dividend * (minus ? -1 : 1)
+  }
+  const realDivide = (first, second) => {
+    if (first < second) {
+      return 0
+    }
+    let result = 1
+    let tmp = second
+    while (tmp + tmp < first) { // 试减数
+      tmp += tmp // 减数翻倍
+      result += result // 结果翻倍
+    }
+    return result + realDivide(first - tmp, second) // 剩余继续处理
+  }
+  dividend -= divisor // 先减去一次，避免溢出
+  const result = realDivide(-dividend, -divisor) + 1 // 加上减去的一次
+  console.log('divide result: ', result * (minus ? -1 : 1))
+  return result * (minus ? -1 : 1)
+}
+
+const divide3 = (dividend, divisor) => {
+  console.log('divide nums: ', dividend, divisor)
+  if (!divisor) {
+    return NaN
+  }
+  const minus = dividend > 0 ^ divisor > 0
+  divisor = divisor < 0 ? divisor : -divisor
+  dividend = dividend < 0 ? dividend : -dividend
+  if (dividend === divisor) {
+    return minus ? -1 : 1
+  }
+  const min = -1 << 31
+  if (dividend === min && divisor === -1 && !minus) {
+    return -(min + 1)
+  }
+  if (dividend > divisor) {
+    return 0
+  }
+  if (divisor === -1) {
+    return -dividend * (minus ? -1 : 1)
+  }
+  dividend -= divisor // 先减去一次，避免溢出
+  dividend = -dividend
+  divisor = -divisor
+  let count = 0
+  while (dividend >> 1 >= divisor) { // 左移
+    count++
+    divisor <<= 1
+  }
+  let result = 0
+  while (count >= 0) {
+    if (divisor <= dividend) { // 试商
+      result += 1 << count
+      dividend -= divisor
+    }
+    divisor >>= 1 // 右移
+    --count // 商结果移位
+  }
+  result++ // 加上减去的一次
+  console.log('divide result: ', result  * (minus ? -1 : 1))
+  return result  * (minus ? -1 : 1)
+}
 
 /* 13. 题目：（LeetCode 11）盛最多水的容器： 给你 n 个非负整数 a1，a2，...，an，
               每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直
@@ -42,17 +197,16 @@ const maxArea = (nums) => {
     const current = nums[i]
     let left = 0
     let right = len - 1
-    let tmp = -1
-    while (!(right === i && left === i)) { // 寻找tmp
+    while (!(right === i && left === i)) { // 不断寻找
       const lenLeft = i - left
       const lenRight = right - i
-      if (lenLeft >= lenRight) {
-        if (current <= nums[left]) {
+      if (lenLeft >= lenRight) { // 左边比较远
+        if (current <= nums[left]) { // 找到比nums[i]大的值
           max = Math.max(max, current * (i - left))
           break
         }
         left++
-      } else {
+      } else { // 右边比较远
         if (current <= nums[right]) {
           max = Math.max(max, current * (right - i))
           break
@@ -72,10 +226,10 @@ const maxArea2 = (nums) => {
   let right = len - 1
   let max = 0
   while (left < right) {
-    const flag = nums[left] < nums[right]
-    const tmp = (right - left) * (flag ? nums[left] : nums[right])
+    const flag = nums[left] < nums[right] // 左边的值小
+    const tmp = (right - left) * (flag ? nums[left] : nums[right]) // 当前容器
     tmp > max && (max = tmp)
-    flag ? left++ : right-- 
+    flag ? left++ : right-- // 继续移动
   }
   console.log('maxArea result: ', max)
   return max
