@@ -1,7 +1,8 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
-  divide(2147483647, 1)
+  // isValidSudoku([[".",".",".",".","5",".",".","1","."],[".","4",".","3",".",".",".",".","."],[".",".",".",".",".","3",".",".","1"],["8",".",".",".",".",".",".","2","."],[".",".","2",".","7",".",".",".","."],[".","1","5",".",".",".",".",".","."],[".",".",".",".",".","2",".",".","."],[".","2",".","9",".",".",".",".","."],[".",".","4",".",".",".",".",".","."]])
+  // divide(2147483647, 1)
   // maxArea2([1, 8, 6, 2, 5, 4, 8, 3, 7])
   // threeSum2([1,-1,-1,0])
   // lengthOfLongestSubstring2('cdd')
@@ -20,6 +21,154 @@ const __main__ = () => {
   // elementForSum([1, 2,7,11,15], 9) // 001
 }
 
+
+
+/* 14. 题目：（LeetCode 36）有效数独：判断一个 9x9 的数独是否有效。
+              只需要根据以下规则，验证已经填入的数字是否有效即可。
+              数字 1-9 在每一行只能出现一次。
+              数字 1-9 在每一列只能出现一次。
+              数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+
+              示例:
+                   输入:
+                        [
+                          ["5","3",".",".","7",".",".",".","."],
+                          ["6",".",".","1","9","5",".",".","."],
+                          [".","9","8",".",".",".",".","6","."],
+                          ["8",".",".",".","6",".",".",".","3"],
+                          ["4",".",".","8",".","3",".",".","1"],
+                          ["7",".",".",".","2",".",".",".","6"],
+                          [".","6",".",".",".",".","2","8","."],
+                          [".",".",".","4","1","9",".",".","5"],
+                          [".",".",".",".","8",".",".","7","9"]
+                        ]
+                    输出: true
+*/
+
+const isValidSudoku = (nums) => {
+  console.log('isValidSudoku nums: ', nums)
+  const blockMap = new Array(9).fill({})
+  const columnMap = new Array(9).fill({})
+  for (let i = 0; i < 9; i++) {
+    let rowMap = {}
+    for (let j = 0; j < 9; j++) {
+      const item = nums[i][j]
+      if (item === '.') {
+        continue
+      }
+      if (rowMap[item] || columnMap[j][item]) {
+        console.log('isValidSudoku result: false')
+        return false
+      }
+      const tmp = blockMap[Number.parseInt(i / 3) * 3 + Number.parseInt(j / 3)]
+      if (tmp[item]) {
+        console.log('isValidSudoku block result: false')
+        return false
+      }
+      rowMap[item] = columnMap[j][item] = tmp[item] = true
+    }
+  }
+  console.log('isValidSudoku result: true')
+  return true
+}
+
+
+const isValidSudoku2 = (nums) => {
+  console.log('isValidSudoku nums: ', nums)
+  const checkRow = (i, j) => {
+    const item = nums[i][j]
+    for (let k = j + 1; k < 9; k++) { // 只需要与后面的进行比较
+      if (item === nums[i][k]) {
+        return false
+      }
+    }
+    return true
+  }
+   const checkColumn = (i, j) => {
+    const item = nums[i][j]
+    for (let k = i + 1; k < 9; k++) { // 只需要与后面的进行比较
+      if (item === nums[k][j]) {
+        return false
+      }
+    }
+    return true
+  }
+  const checkBlock = (i, j) => {
+    const item = nums[i][j]
+    while (true) {
+      j++ // 列加1
+      const jMode = j % 3
+      if (jMode === 0) { // 列超出块
+        j -= 3 // 列回到原来的块初始位置
+        i++ // 行加1
+        if (i % 3 === 0) { // 行超出块，检查完成
+          return true
+        }
+      }
+      if (item === nums[i][j]) { // 发现有相同的
+        return false
+      }
+    }
+  }
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      if (nums[i][j] === '.') {
+        continue
+      }
+      if (!checkRow(i, j) || !checkColumn(i, j) || !checkBlock(i, j)) {
+        console.log('isValidSudoku result: false')
+        return false
+      }
+    }
+  }
+  console.log('isValidSudoku result: true')
+  return true
+}
+
+const isValidSudoku1 = (nums) => {
+  console.log('isValidSudoku nums: ', nums)
+  const checkLine = (index) => {
+    const tmpRow = {} // 存储行的数据
+    const tmpColumn = {} // 存储列的数据
+    for (let i = 0; i < 9; i++) {
+      const rowItem = nums[index][i]
+      const columnItem = nums[i][index]
+      const rowInt = rowItem !== '.'
+      const columnInt = columnItem !== '.'
+      if ((rowInt && tmpRow[rowItem]) || (columnInt && tmpColumn[columnItem])) { // 发现重复
+        return false
+      }
+      rowInt && (tmpRow[rowItem] = true) // 记录行数据
+      columnInt && (tmpColumn[columnItem] = true) // 记录列数据
+    }
+    return true
+  }
+  const checkBlock = (index) => {
+    const tmp = {}
+    // 计算块开始 的位置
+    const start = { r: Number.parseInt(index / 3) * 3, c: Number.parseInt(index % 3) * 3 }
+    for (let i = 0; i < 9; i++) {
+      // 计算块中的元素
+      const item = nums[start.r + Number.parseInt(i / 3)][start.c + Number.parseInt(i % 3)]
+      if (item === '.') {
+        continue
+      }
+      if (tmp[item]) { // 发现重复
+        return false
+      }
+      tmp[item] = true // 记录块数据
+    }
+    return true
+  }
+  for (let i = 0; i < 9; i++) {
+    if (!checkLine(i) || !checkBlock(i)) {
+      console.log('isValidSudoku result: false')
+      return false
+    }
+  }
+  console.log('isValidSudoku result: true')
+  return true
+}
 
 
 /* 14. 题目：（LeetCode 29）两数相除：给定两个整数，被除数 dividend 和除数 divisor。
