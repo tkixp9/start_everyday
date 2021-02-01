@@ -1,6 +1,8 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
+  canJump2([2, 1, 3, 1, 4])
+  // multiply('3', '2')
   // isValidSudoku([[".",".",".",".","5",".",".","1","."],[".","4",".","3",".",".",".",".","."],[".",".",".",".",".","3",".",".","1"],["8",".",".",".",".",".",".","2","."],[".",".","2",".","7",".",".",".","."],[".","1","5",".",".",".",".",".","."],[".",".",".",".",".","2",".",".","."],[".","2",".","9",".",".",".",".","."],[".",".","4",".",".",".",".",".","."]])
   // divide(2147483647, 1)
   // maxArea2([1, 8, 6, 2, 5, 4, 8, 3, 7])
@@ -21,6 +23,142 @@ const __main__ = () => {
   // elementForSum([1, 2,7,11,15], 9) // 001
 }
 
+
+/* 16. 题目：（LeetCode 55）跳跃游戏：给定一个非负整数数组 nums ，你最初位于
+              数组的 第一个下标 。数组中的每个元素代表你在该位置可以跳跃的最
+              大长度。判断你是否能够到达最后一个下标。
+ 
+              示例：
+
+              输入：nums = [2, 3, 1, 1, 4]
+              输出：true
+              解释：可以先跳 1 步，从下标 0 到达下标 1, 然后再从下标 1 跳 3 步到达最后一个下标。
+
+*/
+
+const canJump2 = (nums) => {
+  console.log('canJump nums1: ', nums)
+  const end = nums.length - 1
+  const drops = new Set() // 存放已经遍历过的下标，也可以考虑不存储
+  let i = 0
+  while (i < end) {
+    drops.add(i)
+    const current = i
+    if (!nums[i]) {
+      while (true) {
+        if (--i <= 0) { // 找不到合适的位置
+          console.log('canJump result: ', false)
+          return false
+        }
+        if (!drops.has(i)) {
+          drops.add(i)
+          if (i + nums[i] > current) { // 找到合适的位置
+            break
+          }
+        }
+      }
+    }
+    i += nums[i]
+  }
+  console.log('canJump result: ', true)
+  return true
+}
+
+const canJump = (nums) => {
+  console.log('canJump nums1: ', nums)
+  const end2 = nums.length - 1
+  let maxIndex = 0 // 记录可以到达的最大位置
+  let i = 0
+  while (maxIndex < end) {
+    const tmp = nums[i] + i
+    if (tmp > maxIndex) {
+      maxIndex = tmp
+    }
+    if (++i > maxIndex) { // 无法到达下一个位置
+      console.log('canJump result: ', false)
+      return false
+    }
+  }
+  console.log('canJump result: ', true)
+  return true
+}
+
+/* 15. 题目：（LeetCode 43）字符串相乘：给定两个以字符串形式表示的非负
+              整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积
+              也表示为字符串形式。
+              
+              示例:
+                  输入: num1 = "2", num2 = "3"
+                  输出: "6"
+              说明：
+
+                  num1 和 num2 的长度小于110。
+                  num1 和 num2 只包含数字 0-9。
+                  num1 和 num2 均不以零开头，除非是数字 0 本身。
+                  不能使用任何标准库的大数类型（比如 BigInteger）或直接将输入转换为整数来处理。
+
+*/
+
+const multiply = (num1, num2) => {
+  console.log('multiply nums: ', num1, num2)
+  if (num1 === '0' || num2 === '0') {
+    return '0'
+  }
+  const len1 = num1.length
+  const len2 = num2.length
+  const result = new Array(len1 + len2).fill(0) // 记录结果
+  for (let i = len1 - 1; i >= 0; i--) {
+    for (let j = len2 - 1; j >= 0; j--) {
+      const sum = num1[i] * num2[j] + result[i + j + 1]
+      console.log('tkyj++++', sum)
+      result[i + j + 1] = sum % 10
+      result[i + j] += Number.parseInt(sum / 10)
+    }
+  }
+  if (!result[0]) { // 结果可能有两种位数
+    result.shift()
+  }
+  console.log('multiply result: ', result.join(''))
+  return result.join('')
+}
+
+
+const multiply1 = (num1, num2) => {
+  console.log('multiply nums: ', num1, num2)
+  if (num1 === '0' || num2 === '0') {
+    return '0'
+  }
+  const end1 = num1.length - 1
+  const end2 = num2.length - 1
+  const max = end1 + end2 + 1
+  const result = new Array(max + 1) // 记录结果
+  let moveIndex = 0 // 循环步数，记录结果的每一位
+  let sum = 0 // 计算每一位的结果
+  while (moveIndex <= max) { // m位 * n位的结果为m+n位或者m+n-1位
+    let moveTmp = moveIndex
+    while (moveTmp >= 0) { 
+      const index2 = end2 - moveTmp // 对位计算
+      if (index2 < 0) {
+        moveTmp += index2
+        continue
+      }
+      const index1 = end1 - moveIndex + moveTmp // 对位计算
+      if (index1 > end1 || index1 < 0) {
+        break
+      }
+      sum += num1[index1] * num2[index2] // 对位计算
+      moveTmp--
+    }
+    result[max - moveIndex] = sum % 10 // 保存结算结果
+    sum = Number.parseInt(sum / 10) // 进位
+    moveIndex++
+  }
+  if (!result[0]) { // 结果可能有两种位数
+    result.shift()
+  }
+  console.log('multiply result: ', result.join(''))
+  return result.join('')
+}
 
 
 /* 14. 题目：（LeetCode 36）有效数独：判断一个 9x9 的数独是否有效。
