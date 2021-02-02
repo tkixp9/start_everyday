@@ -1,7 +1,8 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
-  canJump2([2, 1, 3, 1, 4])
+  uniquePaths(51, 9)
+  // canJump2([2, 1, 3, 1, 4])
   // multiply('3', '2')
   // isValidSudoku([[".",".",".",".","5",".",".","1","."],[".","4",".","3",".",".",".",".","."],[".",".",".",".",".","3",".",".","1"],["8",".",".",".",".",".",".","2","."],[".",".","2",".","7",".",".",".","."],[".","1","5",".",".",".",".",".","."],[".",".",".",".",".","2",".",".","."],[".","2",".","9",".",".",".",".","."],[".",".","4",".",".",".",".",".","."]])
   // divide(2147483647, 1)
@@ -23,6 +24,80 @@ const __main__ = () => {
   // elementForSum([1, 2,7,11,15], 9) // 001
 }
 
+/* 016. 题目：（LeetCode 62）不同路径：一个机器人位于一个 m x n 网格的左上
+              角 （起始点在下图中标记为 “Start” ）。机器人每次只能向下或者
+              向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+              问总共有多少条不同的路径？
+
+              示例：
+
+              输入：m = 3, n = 7
+              输出：28
+              提示：1 <= m, n <= 100
+                    题目数据保证答案小于等于 2 * 109
+*/
+const uniquePaths = (m, n) => {
+  console.log('uniquePaths m, n: ', m, n)
+  const array = []
+  for (let i = 0; i < m; i++) {
+    const item = new Array(n)
+    if (i === 0) {
+      item.fill(1)
+    } else {
+      item[0] = 1
+      for (let j = 1; j < n; j++) {
+        item[j] = item[j - 1] + array[i - 1][j]
+      }
+    }
+    array.push(item)
+  }
+  console.log('uniquePaths result: ', array[m - 1][n - 1])
+  return array[m - 1][n - 1]
+}
+
+const uniquePaths3 = (m, n) => {
+  console.log('uniquePaths m, n: ', m, n)
+  const steps = { max: m - 1, min: n - 1 }
+  const move = (m1, m, n1, n) => {
+    if (m1 === m || n1 === n) {
+      return 1
+    }
+    return move(m1 + 1, m, n1, n) + move(m1, m, n1 + 1, n)
+  }
+  const result = move(1, m, 1, n)
+  console.log('uniquePaths result: ', result)
+  return result
+}
+
+const uniquePaths2 = (m, n) => {
+  console.log('uniquePaths m, n: ', m, n)
+  const steps = { max: m - 1, min: n - 1 }
+  const move = (m, n) => {
+    if (m === 1 || n === 1) {
+      return 1
+    }
+    return move(m - 1, n) + move(m, n - 1)
+  }
+  const result = move(m, n)
+  console.log('uniquePaths result: ', result)
+  return result
+}
+
+const uniquePaths1 = (m, n) => {
+  console.log('uniquePaths m, n: ', m, n)
+  const steps = { max: m - 1, min: n - 1 }
+  if (m < n) { // 考虑大小可以减少循环计算，可以去掉的部分
+    steps.max = n - 1
+    steps.min = m - 1 
+  }
+  steps.total = steps.max + steps.min // 总步数
+  let result = 1
+  for (let i = 1; i <= steps.min;) {
+    result *= steps.total-- / i++ // 求解组合问题
+  }
+  console.log('uniquePaths result: ', result)
+  return Math.round(result)
+}
 
 /* 16. 题目：（LeetCode 55）跳跃游戏：给定一个非负整数数组 nums ，你最初位于
               数组的 第一个下标 。数组中的每个元素代表你在该位置可以跳跃的最
