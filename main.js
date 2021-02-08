@@ -1,7 +1,14 @@
 
 const __main__ = () => {
   console.log('-------------divider--------------')
-  uniquePaths(51, 9)
+  findMedianSortedArrays([3,4]
+,[1,2,5])
+  // rob([2,1,1,2])
+  // canCompleteCircuit([1,2,3,4,5], [3,4,5,1,2])
+  // sortColors([2,0,2,1,1,0])
+  // minPathSum1([[1,3,1],[1,5,1],[4,2,1]])
+  // uniquePathsWithObstacles3([[1, 0]])
+  // uniquePaths(51, 9)
   // canJump2([2, 1, 3, 1, 4])
   // multiply('3', '2')
   // isValidSudoku([[".",".",".",".","5",".",".","1","."],[".","4",".","3",".",".",".",".","."],[".",".",".",".",".","3",".",".","1"],["8",".",".",".",".",".",".","2","."],[".",".","2",".","7",".",".",".","."],[".","1","5",".",".",".",".",".","."],[".",".",".",".",".","2",".",".","."],[".","2",".","9",".",".",".",".","."],[".",".","4",".",".",".",".",".","."]])
@@ -24,6 +31,674 @@ const __main__ = () => {
   // elementForSum([1, 2,7,11,15], 9) // 001
 }
 
+
+
+/* 020. 题目：LeetCode 138. 寻找两个正序数组的中位数：给定两个大小为 m 和 n 的正
+              序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的中位数。
+              
+              示例：
+                    输入：nums1 = [1,3], nums2 = [2]
+                    输出：2.00000
+                    解释：合并数组 = [1,2,3] ，中位数 2。
+
+              提示：
+                    nums1.length == m
+                    nums2.length == n
+                    0 <= m <= 1000
+                    0 <= n <= 1000
+                    1 <= m + n <= 2000
+                    -106 <= nums1[i], nums2[i] <= 106
+*/
+const findMedianSortedArraysxxx = (nums1, nums2) => {
+  console.log('findMedianSortedArrays nums: ', nums1, nums2)
+  const len1 = nums1.length
+  const len2 = nums2.length
+  const odd = (len1 + len2) % 2 === 1
+  const left = Number.parseInt((len1 + len2) / 2)
+  if (len1 === 0 || len2 === 0) { // 单个数组的情况，直接给出结果
+    const nums = len1 === 0 ? nums2 : nums1
+    return odd ? nums[left] : (nums[left - 1] + nums[left]) / 2
+  }
+  if (len1 === 1 && len2 === 1) {
+    return (nums1[0] + nums2[0]) / 2
+  }
+  let i = Number.parseInt(len1 / 2)
+  let j = Number.parseInt(len2 / 2)
+  // if (i === 0) {
+  //   i++
+  //   j--
+  // } else if (j === 0) {
+  //   i--
+  //   j++
+  // }
+  console.log('tkyj+1111++', i, j, left)
+  let result = null
+  let lastI = -2
+  while (true) {
+    console.log('tkyj+2222dddd++', i, j, left)
+    if (i === -1 || j === -1) {
+      const nums = i === -1 ? nums2 : nums1
+      result = odd ? nums[left] : (nums[left - 1] + nums[left]) / 2
+      break
+    }
+    if (i === len1) {
+      const tmp = len2 - left
+      result = odd ? nums2[tmp - 1] : ((tmp > 0 ? nums2[tmp - 1] : nums1[len1 - 1]) + nums2[tmp]) / 2
+      break
+    }
+     if (j === len2) {
+      const tmp = len1 - left
+      result = odd ? nums1[tmp - 1] : ((tmp > 0 ? nums1[tmp - 1] : nums2[len2 - 1]) + nums1[tmp]) / 2
+      break
+    }
+    // if (i === len1 || j === len2) {
+    //   const nums = i === len1 ? nums2 : nums1
+    //   const tmp = i === len1 ? len2 - left : len1 - left
+    //   result = odd ? nums[tmp] : (tmp > 0 ? nums[tmp - 1] + nums[tmp]) / 2
+    //   break
+    // }
+    console.log('tkyj+333333++', lastI)
+    if (lastI === i) {
+      break
+    }
+    lastI = i
+    if (nums1[i] < nums2[j]) {
+      if (i !== len1 - 1) {
+        if (nums1[i + 1] < nums2[j] && (nums2[j - 1] < nums1[i])) {
+          i++
+          j--
+          continue
+        }
+      } if (j !== 0) {
+        if (nums1[i] < nums2[j - 1] && (nums1[i + 1] > nums2[j])) {
+          i++
+          j--
+          continue
+        }
+      }
+    } else {
+      if (j !== len1 - 1) {
+        if (nums2[j + 1] < nums1[i] && (nums2[j] < nums1[i - 1])) {
+          j++
+          i--
+          continue
+        }
+      }
+       if (i !== 0) {
+        if (nums2[j] < nums1[i - 1] && (nums2[j + 1] > nums1[i])) {
+          j++
+          i--
+          continue
+        }
+      }
+    }
+  }
+  console.log('findMedianSortedArraxxxxys result: ', result)
+  if (result === null) {
+    result = odd ? Math.min(nums1[i], nums2[j])
+    : (len1 % 2 === 1 ? (nums1[i] + nums2[j]) / 2
+     : (Math.max(nums1[i - 1], nums2[j - 1]) + Math.min(nums1[i], nums2[j])) / 2)
+  }
+
+  console.log('tkyj+222++', i, j)
+  console.log('findMedianSortedArrays result: ', result)
+  return result
+}
+const findMedianSortedArrays = (nums1, nums2) => {
+  console.log('findMedianSortedArrays nums: ', nums1, nums2)
+  const len1 = nums1.length
+  const len2 = nums2.length
+  const odd = (len1 + len2) % 2 === 1
+  const left = Number.parseInt((len1 + len2) / 2)
+  if (len1 === 0 || len2 === 0) { // 单个数组的情况，直接给出结果
+    const nums = len1 === 0 ? nums2 : nums1
+    return odd ? nums[left] : (nums[left - 1] + nums[left]) / 2
+  }
+  let i = 0
+  let j = 0
+  let result = null
+  while (i + j < left) {
+    if (i > len1 - 1 || j > len2 - 1) { // 有一个数组超出范围，直接给出结果
+      if (i > len1 - 1) {
+        j = left - len1
+        result = odd ? nums2[j] : (nums2[j - 1] + nums2[j]) / 2
+      } else if (j > len2 - 1) {
+        i = left - len2
+        result = odd ? nums1[i] : (nums1[i - 1] + nums1[i]) / 2
+      }
+     break
+    }
+    nums1[i] < nums2[j] ? i++ : j++ // 小的循环
+  }
+  if (result !== null) {
+  } else if (odd) { // 奇数长度，给出结果
+    result = Math.min(i === len1 ? nums2[j] + 1 : nums1[i], j === len2 ? nums1[i] + 1: nums2[j])
+  } else { // 偶数长度
+    if (len1 > len2) { // 第一个数组较长时，i - 1和i的位置都是有效的
+      if (j === 0) {
+        result = (nums1[i - 1] + Math.min(nums1[i], nums2[j])) / 2
+      } else if (j === len2) {
+        result = (nums1[i] + Math.max(nums1[i - 1], nums2[j - 1])) / 2
+      } else {
+        result = (Math.max(nums1[i - 1], nums2[j - 1]) + Math.min(nums1[i], nums2[j])) / 2
+      }
+    } else {
+      if (i === 0) { // 要考虑len1 === len2 的情况
+        result = (nums2[j - 1] + (j === len2 ? nums1[i] : Math.min(nums1[i], nums2[j]))) / 2
+      } else if (i === len1) {
+        result = (nums2[j] + (j === 0 ? nums1[i - 1] : Math.max(nums1[i - 1], nums2[j - 1]))) / 2
+      } else {
+        result = (Math.max(nums1[i - 1], nums2[j - 1]) + Math.min(nums1[i], nums2[j])) / 2
+      }
+    }
+  }
+  console.log('findMedianSortedArrays result: ', result)
+  return result
+}
+
+
+
+/* 020. 题目：LeetCode 138. 打家劫舍：你是一个专业的小偷，计划偷窃沿街的房屋。
+              每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房
+              屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，
+              系统会自动报警。给定一个代表每个房屋存放金额的非负整数数组，计算
+              你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+              
+              示例：
+                    输入：[1,2,3,1]
+                    输出：4
+              解释：偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+                    偷窃到的最高金额 = 1 + 3 = 4 。
+
+              提示：
+              0 <= nums.length <= 100
+              0 <= nums[i] <= 400
+*/
+const rob = (nums) => {
+  console.log('rob nums: ', nums)
+  const len = nums.length
+  if (len < 1) {
+    return nums[0] || 0
+  }
+  let value1 = 0
+  let value2 = nums[0]
+  for (let i = 1; i < len; i++) {
+    const value = Math.max(value1 + nums[i], value2)
+    value1 = value2
+    value2 = value  
+  }
+  console.log('rob result: ', Math.max(value1, value2))
+  return Math.max(value1, value2)
+}
+
+const rob3 = (nums) => {
+  console.log('rob nums: ', nums)
+  const end = nums.length - 1
+  if (end < 0) {
+    return 0
+  }
+  const cal = (n) => {
+    if (n === 0) {
+      return nums[0]
+    }
+    if (n === 1) {
+       return nums[1]
+    }
+    return Math.max(cal(n - 2) + nums[n], cal(n - 1))
+  }
+  const result = cal(end)
+  console.log('rob result: ', result)
+  return result
+}
+
+const rob2 = (nums) => {
+  console.log('rob nums: ', nums)
+  const len = nums.length
+  if (len < 2) {
+    return nums[0] || 0
+  }
+  let value0 = 0
+  let value1 = nums[0]
+  let value2 = nums[1]
+  for (let i = 2; i < len; i++) {
+    const value = Math.max(value0, value1) + nums[i]
+    value0 = value1
+    value1 = value2
+    value2 = value  
+  }
+  console.log('rob result: ', Math.max(value1, value2))
+  return Math.max(value1, value2)
+}
+
+
+const rob1 = (nums) => {
+  console.log('rob nums: ', nums)
+  const end = nums.length - 1
+  const cal = (n) => {
+    if (n < 0) {
+      return 0
+    }
+    if (n === 0) {
+      return nums[0]
+    }
+    if (n === 1) {
+       return nums[1]
+    }
+    return Math.max(cal(n - 2) || 0, cal(n - 3) || 0) + nums[n]
+  }
+  const result = Math.max(cal(end), cal(end - 1))
+  console.log('rob result: ', result)
+  return result
+}
+
+
+/* 020. 题目：LeetCode 134. 加油站：在一条环路上有 N 个加油站，
+              其中第 i 个加油站有汽油 gas[i] 升。你有一辆油
+              箱容量无限的的汽车，从第 i 个加油站开往第 i+1 个
+              加油站需要消耗汽油 cost[i] 升。你从其中的一个加油站出发，
+              开始时油箱为空。
+
+              如果你可以绕环路行驶一周，则返回出发时加油站的编号，否则返回 -1。
+
+              说明: 
+
+              如果题目有解，该答案即为唯一答案。
+              输入数组均为非空数组，且长度相同。
+              输入数组中的元素均为非负数。
+
+              
+              示例：
+                    输入: 
+                    gas  = [1,2,3,4,5]
+                    cost = [3,4,5,1,2]
+
+                    输出: 3
+*/
+
+const canCompleteCircuit = (gas, cost) => {
+  console.log('canCompleteCircuit gas, cost: ', gas, cost)
+  let index = gas.length - 1
+  let max = 0
+  let sum = 0
+  for (let i = index; i >= 0; i--) {
+    sum += gas[i] - cost[i]
+    if (max <= sum) {
+      max = sum
+      index = i
+    }
+  }
+  console.log('canCompleteCircuit result: ', sum)
+  return sum >= 0 ?  index : -1
+}
+const canCompleteCircuit2 = (gas, cost) => {
+  console.log('canCompleteCircuit gas, cost: ', gas, cost)
+  let index = 0
+  let min = 0
+  let sum = 0
+  for (let i = 0; i < gas.length; i++) {
+    sum += gas[i] - cost[i]
+    if (min > sum) {
+      min = sum
+      index = i + 1
+    }
+  }
+  console.log('canCompleteCircuit result: ', sum)
+  return sum >= 0 ?  index : -1
+}
+
+
+const canCompleteCircuit1 = (gas, cost) => {
+  console.log('canCompleteCircuit gas, cost: ', gas, cost)
+  let start = -1
+  let left = 0
+  for (let i = 0; i < gas.length; i++) {
+    gas[i] -= cost[i] // 计算剩余量
+    if (gas[i] >= 0) { // 有剩余
+      if (start === -1) {
+        start = i
+      }
+      left += gas[i]
+    } else if (left >= 0) { // 有累计剩余
+      left += gas[i]
+      if (left < 0) { // 无累计剩余，无法到达
+        start = -1
+        left = 0
+      }
+    }
+  }
+  for (let i = 0; i < start; i++) { // 是否能走完
+    left += gas[i]
+    if (left < 0) {
+      return -1
+    }
+  }
+  console.log('canCompleteCircuit result: ', start)
+  return start
+}
+
+
+/* 019. 题目：（LeetCode 75） 颜色分类：给定一个包含红色、白色和蓝色，
+              一共 n 个元素的数组，原地对它们进行排序，使得相同颜色的
+              元素相邻，并按照红色、白色、蓝色顺序排列。
+              此题中，我们使用整数 0、 1 和 2 分别表示红色、白色和蓝色。
+
+              说明：每次只能向下或者向右移动一步。
+              
+              示例：
+
+                    输入：nums = [2,0,2,1,1,0]
+                    输出：[0,0,1,1,2,2]
+
+              提示：
+                    n == nums.length
+                    1 <= n <= 300
+                    nums[i] 为 0、1 或 2
+*/
+
+const sortColors = (nums) => {
+  console.log('sortColors nums: ', nums)
+  let index0 = 0
+  let index1 = 0
+  let i = 0
+  while (i <= nums.length) {
+    const tmp = index1
+    if (nums[i] === 0) {
+      nums[i] = nums[index0]
+      nums[index0] = 0  // 0 放在最前
+      index0++
+      index1++
+    } 
+    if (nums[i] === 1) {
+      nums[i] = nums[tmp]
+      nums[tmp] = 1 // 1放在0后
+      index1 = tmp + 1
+    }
+    i++
+  }
+  console.log('sortColors result: ', nums)
+  return nums
+}
+
+const sortColors3 = (nums) => {
+  console.log('sortColors nums: ', nums)
+  let index0 = 0
+  let index1 = 0
+  let i = 0
+  while (i <= nums.length) {
+    if (nums[i] === 0) {
+      nums[i] = nums[index0]
+      nums[index0] = 0  // 0 放在最前
+      if (index0 < index1) { // 确定交换的值
+        const tmp = nums[i]
+        nums[i] = nums[index1]
+        nums[index1] = tmp
+      }
+      index0++
+      index1++
+    } else if (nums[i] === 1) {
+      nums[i] = nums[index1]
+      nums[index1++] = 1
+    }
+    i++
+  }
+  console.log('sortColors result: ', nums)
+  return nums
+}
+
+const sortColors0 = (nums) => {
+  console.log('sortColors nums: ', nums)
+  const len = nums.length
+  let pos = -1
+  let i = 0
+  for (; i < len; i++) {
+    if (nums[i] === 0) {
+      if (pos !== -1) {
+        nums[i] = nums[pos]
+        nums[pos++] = 0
+      }
+    } else if (pos === -1) {
+      pos = i
+    }
+  }
+  i = pos
+  pos = -1
+  for (; i < len; i++) {
+    if (nums[i] === 1) {
+      if (pos !== -1) {
+        nums[i] = nums[pos]
+        nums[pos++] = 1
+      }
+    } else if (pos === -1) {
+      pos = i
+    }
+  }
+  console.log('sortColors result: ', nums)
+  return nums
+}
+
+const sortColors1 = (nums) => {
+  console.log('sortColors nums: ', nums)
+  let start = 0
+  let index1 = -1
+  let end = nums.length - 1
+  while (start <= end) {
+    if (nums[start] === 2) { // 2 放到最后
+      nums[start] = nums[end] 
+      nums[end--] = 2
+    }
+    if (nums[start] === 0) { // 0 放在最前
+      if (index1 >= 0) {
+        nums[start++] = nums[index1]
+        nums[index1++] = 0 // 更新index1的位置指向第一个1
+      } else {
+        start++
+      }
+    } 
+    if (nums[start] === 1) { // 更新index1的位置指向第一个1
+      if (index1 < 0) {
+        index1 = start
+      }
+      start++
+    }
+  }
+  console.log('sortColors result: ', nums)
+  return nums
+}
+
+/* 018. 题目：（LeetCode 64）不同路径II：给定一个包含非负整数的 m x n 网格 grid ，
+              请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+              说明：每次只能向下或者向右移动一步。
+              
+              示例：
+
+                    输入：grid = [[1,3,1],[1,5,1],[4,2,1]]
+                    输出：7
+              解释：因为路径 1→3→1→1→1 的总和最小。
+
+              提示：
+                    m == grid.length
+                    n == grid[i].length
+                    1 <= m, n <= 200
+                    0 <= grid[i][j] <= 100
+*/
+
+const minPathSum2 = (grid) => {
+  console.log('minPathSum grid: ', grid)
+  const len = { row: grid.length, col: grid[0].length }
+  const array = new Array(len.col).fill(0)
+  grid[0].forEach((tmp, index) => array[index] = tmp + (array[index - 1] || 0))
+  for (let i = 1; i < len.row; i++) {
+    array[0] += grid[i][0]
+    for (let j = 1; j < len.col; j++) {
+      array[j] = Math.min(array[j - 1], array[j]) + grid[i][j]
+    }
+  }
+  console.log('minPathSum result: ', array[len.col - 1])
+  return array[len.col - 1]
+}
+
+const minPathSum1 = (grid) => {
+  console.log('minPathSum grid: ', grid)
+  const len = { row: grid.length, col: grid[0].length }
+  const array = []
+  for (let i = 0; i < len.row; i++) {
+    const item = new Array(len.col).fill(0)
+    if (i === 0) { // 边界
+      grid[0].forEach((tmp, index) => item[index] = tmp + (item[index - 1] || 0))
+    } else {
+      item[0] = array[i - 1][0] + grid[i][0]
+      for (let j = 1; j < len.col; j++) {
+        item[j] = Math.min(item[j - 1], array[i - 1][j])  + grid[i][j] // 递归方程
+      }
+    }
+    array.push(item)
+  }
+  console.log('minPathSum result: ', array[len.row - 1][len.col - 1])
+  return array[len.row - 1][len.col - 1]
+}
+
+
+const minPathSum = (grid) => {
+  console.log('minPathSum grid: ', grid)
+  const move = (m1, m, n1, n) => {
+    if (m1 === m && n1 === n) {
+      return grid[m1 - 1][n1 - 1]
+    }
+    if (m1 === m) {
+      return move(m1, m, n1 + 1, n) + grid[m1 - 1][n1 - 1]
+    }
+    if (n1 === n) {
+      return move(m1 + 1, m, n1, n) + grid[m1 - 1][n1 - 1]
+    }
+    return Math.min(move(m1 + 1, m, n1, n), move(m1, m, n1 + 1, n)) + grid[m1 - 1][n1 - 1]
+  }
+  const result = move(1, grid.length, 1, grid[0].length)
+  console.log('minPathSum result: ', result)
+  return result
+}
+
+const minPathSum3 = (grid) => {
+  console.log('minPathSum grid: ', grid)
+  const move = (m, n) => {
+    if (m === 1 && n === 1) {
+      return grid[0][0]
+    }
+    if (m === 1) {
+      return move(m, n - 1) + grid[m - 1][n - 1]
+    }
+    if (n === 1) {
+      return move(m - 1, n) + grid[m - 1][n - 1]
+    }
+    return Math.min(move(m - 1, n), move(m, n - 1)) + grid[m - 1][n - 1]
+  }
+  const result = move(grid.length, grid[0].length)
+  console.log('minPathSum result: ', result)
+  return result
+}
+/* 017. 题目：（LeetCode 63）不同路径II：一个机器人位于一个 m x n 网格的左上
+              角 （起始点在下图中标记为 “Start” ）。机器人每次只能向下或者
+              向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+              现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
+
+              示例：
+
+              输入：obstacleGrid = [[0,0,0],[0,1,0],[0,0,0]]
+              输出：2
+              解释：3x3 网格的正中间有一个障碍物。
+                    从左上角到右下角一共有 2 条不同的路径：
+                    1. 向右 -> 向右 -> 向下 -> 向下
+                    2. 向下 -> 向下 -> 向右 -> 向右
+
+              提示：
+                  m == obstacleGrid.length
+                  n == obstacleGrid[i].length
+                  1 <= m, n <= 100
+                  obstacleGrid[i][j] 为 0 或 1
+*/
+const uniquePathsWithObstacles0 = (grid) => {
+  console.log('uniquePathsWithObstacles grid: ', grid)
+  const len = { row: grid.length, col: grid[0].length }
+  const array = new Array(len.col).fill(0)
+  !grid[0][0] && (array[0] = 1) // 第一个
+  for (let i = 0; i < len.row; i++) {
+    for (let j = 0; j < len.col; j++) {
+      array[j] = grid[i][j] ? 0 : array[j] + (array[j - 1] || 0) // 递归方程
+    }
+  }
+  console.log('uniquePathsWithObstacles result: ', array[len.col - 1])
+  return array[len.col - 1]
+}
+const uniquePathsWithObstacles = (grid) => {
+  console.log('uniquePathsWithObstacles grid: ', grid)
+  const array = []
+  const len = { row: grid.length, col: grid[0].length }
+  for (let i = 0; i < len.row; i++) {
+    const item = new Array(len.col)
+    if (i === 0) { // 边界
+      item[0] = grid[0][0] ? 0 : 1
+      for (let tmp = 1; tmp < len.col; tmp++) {
+        item[tmp] = grid[0][tmp] ? 0 : item[tmp - 1]
+      }
+    } else {
+      item[0] = grid[i][0] ? 0 : array[i - 1][0] // 边界
+      for (let j = 1; j < len.col; j++) {
+        item[j] = grid[i][j] ? 0 : item[j - 1] + array[i - 1][j] // 递归方程
+      }
+    }
+    array.push(item)
+  }
+  console.log('uniquePathsWithObstacles result: ', array[len.row - 1][len.col - 1])
+  return array[len.row - 1][len.col - 1]
+}
+
+const uniquePathsWithObstacles3 = (grid) => {
+  console.log('uniquePathsWithObstacles grid: ', grid)
+  const move = (m1, m, n1, n) => { // 递归函数
+    if (grid[m1 - 1][n1 - 1]) { // 边界条件 
+      return 0
+    }
+    if (m1 === m && n1 === n) {  // 最后值
+      return 1
+    }
+    if (m1 === m) { // 到达一个边界
+      return move(m1, m, n1 + 1, n)
+    }
+    if (n1 === n) { // 到达一个边界
+      return move(m1 + 1, m, n1, n)
+    }
+
+    return move(m1 + 1, m, n1, n) + move(m1, m, n1 + 1, n)
+  }
+  const result = move(1, grid.length, 1, grid[0].length)
+  console.log('uniquePathsWithObstacles result: ', result)
+  return result
+}
+
+const uniquePathsWithObstacles2 = (grid) => {
+  console.log('uniquePathsWithObstacles grid: ', grid)
+  const move = (m, n) => { // 递归函数
+    if (grid[m - 1][n - 1]) { // 边界条件 
+      return 0
+    }
+    if (m === 1 && n === 1) { // 初始值
+      return 1
+    }
+    if (m === 1) { // 到达一个边界
+      return move(m, n - 1)
+    }
+    if (n === 1) { // 到达一个边界
+      return move(m - 1, n)
+    }
+
+    return move(m - 1, n) + move(m, n - 1)
+  }
+  const result = move(grid.length, grid[0].length)
+  console.log('uniquePathsWithObstacles result: ', result)
+  return result
+}
+
+
 /* 016. 题目：（LeetCode 62）不同路径：一个机器人位于一个 m x n 网格的左上
               角 （起始点在下图中标记为 “Start” ）。机器人每次只能向下或者
               向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
@@ -38,15 +713,26 @@ const __main__ = () => {
 */
 const uniquePaths = (m, n) => {
   console.log('uniquePaths m, n: ', m, n)
+  const array = new Array(n).fill(1)
+  for (let i = 1; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      array[j] += array[j - 1] || 0
+    }
+  }
+  console.log('uniquePaths result: ', array[m - 1][n - 1])
+  return array[n - 1]
+}
+const uniquePaths0 = (m, n) => {
+  console.log('uniquePaths m, n: ', m, n)
   const array = []
   for (let i = 0; i < m; i++) {
     const item = new Array(n)
-    if (i === 0) {
+    if (i === 0) { // 边界
       item.fill(1)
     } else {
-      item[0] = 1
+      item[0] = 1 // 边界
       for (let j = 1; j < n; j++) {
-        item[j] = item[j - 1] + array[i - 1][j]
+        item[j] = item[j - 1] + array[i - 1][j] // 递归方程
       }
     }
     array.push(item)
@@ -57,9 +743,8 @@ const uniquePaths = (m, n) => {
 
 const uniquePaths3 = (m, n) => {
   console.log('uniquePaths m, n: ', m, n)
-  const steps = { max: m - 1, min: n - 1 }
-  const move = (m1, m, n1, n) => {
-    if (m1 === m || n1 === n) {
+  const move = (m1, m, n1, n) => { // 递归函数
+    if (m1 === m || n1 === n) { // 边界条件 
       return 1
     }
     return move(m1 + 1, m, n1, n) + move(m1, m, n1 + 1, n)
@@ -71,9 +756,8 @@ const uniquePaths3 = (m, n) => {
 
 const uniquePaths2 = (m, n) => {
   console.log('uniquePaths m, n: ', m, n)
-  const steps = { max: m - 1, min: n - 1 }
-  const move = (m, n) => {
-    if (m === 1 || n === 1) {
+  const move = (m, n) => { // 递归函数
+    if (m === 1 || n === 1) { // 边界条件 
       return 1
     }
     return move(m - 1, n) + move(m, n - 1)
@@ -96,7 +780,7 @@ const uniquePaths1 = (m, n) => {
     result *= steps.total-- / i++ // 求解组合问题
   }
   console.log('uniquePaths result: ', result)
-  return Math.round(result)
+  return Math.round(result) // 可能出现计算过程中除不尽的情况
 }
 
 /* 16. 题目：（LeetCode 55）跳跃游戏：给定一个非负整数数组 nums ，你最初位于
